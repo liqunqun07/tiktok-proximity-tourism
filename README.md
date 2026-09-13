@@ -51,10 +51,7 @@
 | `07_extended_diagnostics.py` | 扩展诊断：变量编码方向、零膨胀、二次项、ZINB vs NB | Extended diagnostics: coding direction, zero-inflation, quadratic terms, ZINB vs NB |
 | `08_time_fixed_effects.py` | 时间固定效应稳健性检验（发文年份哑变量） | Time fixed-effects robustness (posting-year dummies) |
 | `09_ml_extended_eval.py` | ML 补充评估：MAE、5 折交叉验证、基线对比 | Extended ML evaluation: MAE, 5-fold CV, baseline comparison |
-| `10_nb_dispersion_mle.py` | 负二项离散参数 α 的 MLE 设定稳健性 | NB dispersion parameter α robustness (fixed vs. MLE) |
-| `11_equity_moderation.py` | 公平性调节效应分析（创作者规模 × 内容策略） | Equity moderation analysis (creator scale × content strategy) |
-| `12_shap_subgroup.py` | SHAP 子样本对比（小账号 vs 大账号） | SHAP subgroup comparison (small vs. large creators) |
-| `13_equity_figures.py` | 公平性调节效应图表生成 | Equity moderation figures |
+| `10_nb_dispersion_mle.py` | 负二项离散参数 α 的 MLE 设定稳健性（Appendix A.2） | NB dispersion parameter α robustness: fixed vs. MLE (Appendix A.2) |
 
 ---
 
@@ -71,7 +68,7 @@ cd code
 ../.venv/bin/python3 05_robustness_checks.py
 ```
 
-后续脚本（`06`–`13`）为补充/稳健性检验，按需运行；全部输出落盘至 `outputs/`。
+后续脚本（`06`–`10`）为补充/稳健性检验，按需运行；全部输出落盘至 `outputs/`。
 
 ---
 
