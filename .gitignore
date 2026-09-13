@@ -21,3 +21,8 @@ bertopic/
 Method_线索级重构新版.docx
 文献综述_线索级重构新版.docx
 AGENTS.md
+
+# 另一篇论文（"Does Rawness Level the Playing Field?"）的公平性调节效应代码，不属于本稿分析范围
+code/11_equity_moderation.py
+code/12_shap_subgroup.py
+code/13_equity_figures.py
