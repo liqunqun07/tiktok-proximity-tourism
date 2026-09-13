@@ -1,0 +1,23 @@
+# Python / 环境
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# 系统文件 / System files
+.DS_Store
+.CFUserTextEncoding
+
+# 文档与中间产物（非本次上传范围）/ Docs & intermediates (out of scope)
+docs/
+outputs/
+scratch/
+.claude/
+bertopic/
+
+# 其他并行研究版本 / Parallel research versions
+修改版本1-analysis_RQ1_RQ5_predictive_visibility/
+Method_线索级重构新版.docx
+文献综述_线索级重构新版.docx
+AGENTS.md
