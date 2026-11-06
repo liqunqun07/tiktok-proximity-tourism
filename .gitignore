@@ -1,28 +1,24 @@
-# Python / 环境
+# Python / Virtual Environment
 .venv/
 __pycache__/
 *.pyc
 *.pyo
 .ipynb_checkpoints/
 
-# 系统文件 / System files
+# Node.js
+node_modules/
+
+# System Files
 .DS_Store
 .CFUserTextEncoding
 
-# 文档与中间产物（非本次上传范围）/ Docs & intermediates (out of scope)
-docs/
-outputs/
-scratch/
+# Agent scratch
+.agents/
 .claude/
-bertopic/
+# Local multi-agent dispatch state
+.herdr-run/
 
-# 其他并行研究版本 / Parallel research versions
-修改版本1-analysis_RQ1_RQ5_predictive_visibility/
-Method_线索级重构新版.docx
-文献综述_线索级重构新版.docx
-AGENTS.md
-
-# 另一篇论文（"Does Rawness Level the Playing Field?"）的公平性调节效应代码，不属于本稿分析范围
-code/11_equity_moderation.py
-code/12_shap_subgroup.py
-code/13_equity_figures.py
+# Not part of the public package
+manuscript/
+archive/
+spec.yaml

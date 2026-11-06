@@ -1,0 +1,38 @@
+source,category,videos,share
+Sample,Analytic sample,22924,100.0
+POI type,Cafes and coffee,521,2.27
+POI type,Books and bookstores,104,0.45
+POI type,Museums and galleries,545,2.38
+POI type,Parks and outdoors,433,1.89
+POI type,Libraries,48,0.21
+POI type,Markets,15,0.07
+Caption keywords,Cafes and coffee,5205,22.71
+Caption keywords,Books and bookstores,2803,12.23
+Caption keywords,Museums and galleries,2575,11.23
+Caption keywords,Parks and outdoors,2094,9.13
+Caption keywords,Libraries,680,2.97
+Caption keywords,Markets,95,0.41
+Hashtag families,Cafes and coffee,3408,14.87
+Hashtag families,Books and bookstores,2327,10.15
+Hashtag families,Museums and galleries,1169,5.1
+Hashtag families,Parks and outdoors,835,3.64
+Hashtag families,Libraries,391,1.71
+Hashtag families,Markets,10,0.04
+Genre hashtags,Hidden-gem tags,547,2.39
+Genre hashtags,Date-idea tags,352,1.54
+Genre hashtags,Places-to-visit tags,129,0.56
+Genre hashtags,Things-to-do tags,385,1.68
+Genre hashtags,Weekend tags,218,0.95
+Genre hashtags,Support-local tags,361,1.57
+Genre hashtags,City-walk tags,30,0.13
+Posting year,2018,3,0.01
+Posting year,2019,27,0.12
+Posting year,2020,147,0.64
+Posting year,2021,557,2.43
+Posting year,2022,1268,5.53
+Posting year,2023,3326,14.51
+Posting year,2024,6761,29.49
+Posting year,2025,10835,47.26
+Caption language,English,14375,62.71
+Caption language,Chinese,2977,12.99
+Caption language,Other,5572,24.31

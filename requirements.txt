@@ -1,0 +1,11 @@
+# Python dependencies for the full pipeline (python main.py), Python 3.10+.
+# Versions are pinned: the reported estimates were produced with exactly these releases
+# (statsmodels 0.15 changes the negative binomial estimates).
+pandas==2.3.3
+numpy==2.2.6
+scipy==1.15.3
+scikit-learn==1.7.2
+statsmodels==0.14.6
+patsy==1.0.2
+matplotlib==3.10.9
+Pillow==12.3.0

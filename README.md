@@ -1,90 +1,122 @@
-# TikTok 邻近旅游短视频研究 · 数据与代码 / TikTok Proximity Tourism Short-Video Research · Data and Code
+# Seen, Liked, or Saved? — Analysis Package
 
-> 论文 / Paper: *The Sharper the Edit, the Colder the Reception? An Authenticity-Threat Perspective on Proximity Tourism Short Videos on TikTok*（投稿至 SAGE Open）
-
----
-
-## 目录 / Table of Contents
-
-| # | 中文 | English |
-|---|------|---------|
-| 1 | 数据说明 / Data Description | ↓ |
-| 2 | 代码说明 / Code Description | ↓ |
-| 3 | 复现方法 / Reproduction | ↓ |
-| 4 | 关键结果速览 / Key Results | ↓ |
-| 5 | 引用与许可 / Citation & License | ↓ |
-
----
-
-## 1. 数据说明 / Data Description
-
-### `data/01_cleaned.csv` — 清洗后数据 / Cleaned data
-- **说明**：原始爬取数据经去重、时间解析、异常标记后的清洗版本。
-- **规模**：23,010 行（唯一视频）。
-- **English**: Deduplicated, time-parsed, anomaly-flagged version of the raw scraped data. 23,010 rows (unique videos).
-
-### `data/02_features.csv` — 特征工程后数据 / Feature-engineered data
-- **说明**：在清洗数据基础上构建全部自变量、因变量与控制变量（共 32 列），是所有后续分析的统一输入。
-- **English**: All independent / dependent / control variables (32 columns) built on top of the cleaned data — the single shared input for every downstream analysis.
-
-### `data/TikTok变量说明.xlsx` — 变量中英对照字典 / Variable dictionary
-- **说明**：所有字段的中文-英文-含义对照表。
-- **English**: Chinese–English field mapping with definitions for every variable.
-
-> **数据局限说明 / Data limitation**：`is_original`（是否原创）字段在原始爬取中恒为 0，无法用于建模，已从模型中剔除。该局限已在论文中说明。
-
----
-
-## 2. 代码说明 / Code Description
-
-所有脚本均在 `code/` 目录下，共享 `dimensions.py`（变量维度划分）与 `progress.py`（进度记录工具）。
-
-| 脚本 / Script | 中文用途 / Purpose (CN) | English purpose |
-|---|---|---|
-| `00原始采集脚本_参考用.py` | 原始 pyktok 爬虫脚本，仅供参考，无需重跑 | Original pyktok scraper — reference only, not required to re-run |
-| `01_clean_data.py` | 数据清洗（去重 + 时间解析 + 异常标记） | Data cleaning |
-| `02_feature_engineering.py` | 特征构建：将 Lefebvre 空间三元论操作化为三维度平台元数据 | Feature engineering: operationalizing Lefebvre's spatial triad into three theoretical dimensions |
-| `03_descriptive_stats.py` | 描述性统计、相关性、时间趋势、过度离散检验 | Descriptive stats, correlations, time trends, overdispersion tests |
-| `04_regression_negbin.py` | **主模型**：负二项回归（5 个因变量） | **Main model**: negative binomial regression (5 DVs) |
-| `05_robustness_checks.py` | 稳健性检验（POI 子样本、分语言子样本） | Robustness checks (POI subsample, by-language subsample) |
-| `06_ml_shap.py` | 机器学习 + SHAP 可解释性（补充稳健性检验） | ML + SHAP explainability (supplementary robustness) |
-| `07_extended_diagnostics.py` | 扩展诊断：变量编码方向、零膨胀、二次项、ZINB vs NB | Extended diagnostics: coding direction, zero-inflation, quadratic terms, ZINB vs NB |
-| `08_time_fixed_effects.py` | 时间固定效应稳健性检验（发文年份哑变量） | Time fixed-effects robustness (posting-year dummies) |
-| `09_ml_extended_eval.py` | ML 补充评估：MAE、5 折交叉验证、基线对比 | Extended ML evaluation: MAE, 5-fold CV, baseline comparison |
-| `10_nb_dispersion_mle.py` | 负二项离散参数 α 的 MLE 设定稳健性（Appendix A.2） | NB dispersion parameter α robustness: fixed vs. MLE (Appendix A.2) |
-
----
-
-## 3. 复现方法 / Reproduction
-
-**环境 / Environment**：Python 3.10，依赖见 `requirements.txt`（或直接使用仓库自带的 `.venv`）。
+Data and code for the study of how the spatial cues of TikTok proximity-tourism videos relate to
+video exposure, like conversion and save conversion. Lefebvre's spatial triad is operationalised as
+three cue families (embedded narrative, sensory enhancement, interaction guidance), and the analysis
+moves from net effects (negative binomial models) to decoupling tests and configurations (fsQCA).
 
 ```bash
-cd code
-../.venv/bin/python3 01_clean_data.py
-../.venv/bin/python3 02_feature_engineering.py
-../.venv/bin/python3 03_descriptive_stats.py
-../.venv/bin/python3 04_regression_negbin.py
-../.venv/bin/python3 05_robustness_checks.py
+pip install -r requirements.txt   # Python 3.10+
+python main.py                    # full pipeline, about 2 minutes
+python main.py --skip-clean       # reuse data/processed/02_features.csv
 ```
 
-后续脚本（`06`–`10`）为补充/稳健性检验，按需运行；全部输出落盘至 `outputs/`。
+All outputs are written to `outputs/tables/` and `outputs/figures/`. Random seeds are fixed in
+`code/common.py` (`SEED = 20261101`), and all paths are relative to the package root.
 
----
+## 1. Layout
 
-## 4. 关键结果速览 / Key Results
+```
+.
+├── main.py                       runs every stage in order
+├── requirements.txt
+├── code/
+│   ├── 00_raw_api_collection_reference.py   how the raw scrape was collected (not run)
+│   ├── 01_clean_data.py          de-duplicate and parse the raw scrape
+│   ├── 02_feature_engineering.py build cues, controls and outcomes
+│   ├── 05_coverage.py            sample coverage evidence (Appendix Tables A3–A4)
+│   ├── common.py                 analytic sample, variable lists, labels, paths
+│   ├── 10_nb_funnel.py           descriptives + NB2 funnel models (H1–H4)
+│   ├── 15_engagement_types.py    affective vs. instrumental contrasts (H5)
+│   ├── 20_robustness.py          seven alternative regression specifications
+│   ├── 25_complementarity.py     number of strong triad dimensions, convexity and interaction tests (H6)
+│   ├── qcalib.py                 fsQCA engine (calibration, truth table, minimisation)
+│   ├── 30_qca.py                 fsQCA, permutation placebo, bootstrap, 18 specifications (H7)
+│   ├── 52_table_cue_stage_map.py cue-stage map (Appendix Table A5)
+│   ├── 50_fig_diagrams.py        Figures 1–3 (architecture, framework, data and analysis flow)
+│   ├── figstyle.py               shared journal figure style
+│   └── 51_fig_results.py         Figures 4–8 and 10 (coefficients, decoupling, engagement types, complementarity, landscape, robustness)
+├── data/
+│   ├── raw/tiktok_market_raw_scrape_20250528.csv   frozen scrape (23,101 records)
+│   └── processed/01_cleaned.csv, 02_features.csv    regenerated by stages 01–02
+├── outputs/
+│   ├── tables/                   every number reported in the manuscript
+│   └── figures/                  PNG (300 dpi) + PDF for every figure
+```
 
-- **有效样本**：唯一视频 23,010 条；回归建模剔除时间戳异常/零时长后为 22,925 条。
-- **5 个互动指标**（likes / comments / shares / plays / collects）全部严重过度离散（方差/均值比高达万至百万级），故采用负二项回归，而非 OLS / 泊松回归。
-- **VIF 最大 4.5**，无严重多重共线性问题。
-- **核心发现**：技术精致度代理变量（清晰度、响度、音乐叠加）与用户互动呈**一致负相关**——即"精致反噬"（polish backfire）效应；广告标记内容互动更低；粉丝数为最强正向预测因子，标签数驱动互动，地理标签呈差异化效应。
-- **机器学习验证**：XGBoost 样本外 R² 达 0.35–0.43（对数尺度），回归系数与 SHAP 方向一致率达 64%。
+## 2. Data
 
----
+The raw file holds the full public metadata of TikTok videos of everyday places (cafés, markets,
+bookstores, museums, art exhibitions, parks), collected through the public web endpoint and completed on
+28 May 2025. Stage 00 documents the collection; it needs live access to TikTok and is not run.
+The shared raw file omits fields that identify creators or link to their media (handle, nickname,
+avatar, profile text, cover/play/download/share URLs); none of them is used by the analysis.
 
-## 5. 引用与许可 / Citation & License
+| Step | Records |
+|---|---|
+| Raw records | 23,101 |
+| Unique videos (de-duplicated by video ID) | 23,010 |
+| Excluded: invalid posting date / zero duration / zero plays | 1 / 84 / 1 |
+| **Analytic sample** | **22,924** |
 
-**建议引用 / Suggested citation**（待发表后更新）：
-> Li, Q. (2026). The Sharper the Edit, the Colder the Reception? An Authenticity-Threat Perspective on Proximity Tourism Short Videos on TikTok. *SAGE Open*.
+## 3. Variables
 
-**许可 / License**：本仓库代码与数据按 **CC BY 4.0** 提供，可供自由引用、复现与二次分析；原始 TikTok 数据受平台条款约束，引用时请遵守。/ Code and data are provided under CC BY 4.0 for reproducibility and secondary analysis; original TikTok data remain subject to the platform's terms of use.
+| Triad dimension | Cue family | Variable (column) | Construction | Source field |
+|---|---|---|---|---|
+| Representations of space | Embedded narrative | `semantic_richness` | caption terms with TF-IDF weight ≥ the caption's 75th percentile | `description` |
+| | | `text_length` | caption characters | `description` |
+| | | `video_duration` | seconds | `video_info.duration` |
+| Representational space | Sensory enhancement | `has_text_overlay` | 1 = on-screen or cover text sticker with text (types 4 and 9) | `video_stickers` |
+| | | `video_quality_score` | platform quality score (0 = missing) | `video_info.video_quality` |
+| | | `is_vertical` | 1 = height > width | `video_info.height`, `width` |
+| | | `loudness` | integrated loudness (LUFS) | `video_info.volume_info` |
+| | | `emoji_count` | emoji in caption | `description` |
+| Spatial practice | Interaction guidance | `hashtag_count` | number of hashtags | `hashtags_string` |
+| | | `has_poi` | 1 = point of interest attached | `poi.name` |
+| | | `is_ad` | 1 = platform ad flag | `flags.is_ad` |
+| Controls | | `log_follower_count`, `log_following_count` | log1p of creator counts | `author_info.*` |
+| | | `days_since_post`, `post_year`, `language` | days to the latest posting date in the sample; year; caption language | `create_time`, `text_language` |
+| Outcomes | | `plays`, `likes`, `comments`, `shares`, `collects` | platform counters | `interaction_stats.*` |
+
+In the models, right-skewed counts are log1p-transformed and all continuous predictors are z-standardised
+(`common.load_sample`). Like conversion and save conversion are likes and saves per play, modelled as
+counts with `log(plays)` as an offset.
+
+## 4. Outputs and where they appear in the manuscript
+
+| Manuscript item | File | Stage |
+|---|---|---|
+| Table 2 Descriptive statistics | `tables/table_descriptives.csv` | 10 |
+| Table 3 NB2 models, block-wise LR tests | `tables/table_nb_funnel.csv`, `table_nb_fit.csv`, `table_nb_blocks.csv` | 10 |
+| Table 4 Affective vs. instrumental (H5) | `tables/table_engagement_types.csv` | 15 |
+| Table 5 Complementarity (H6) | `tables/table_complementarity.csv`, `table_complementarity_alt.csv` | 25 |
+| Table 6 fsQCA necessity | `tables/table_qca_necessity.csv` | 30 |
+| Table 7 fsQCA configurations | `tables/table_qca_solutions.csv`, `table_qca_permutation.csv` | 30 |
+| Table 8 fsQCA robustness (18 specifications) | `tables/table_qca_robustness.csv` | 30 |
+| Appendix Table A1 Regression robustness | `tables/table_robustness.csv`, `table_robustness_summary.csv` | 20 |
+| Appendix Table A2 Multicollinearity | `tables/table_vif.csv`, `table_correlations.csv` | 10 |
+| Appendix Tables A3–A4 Sample coverage | `tables/tableA3_coverage.csv` | 05 |
+| Appendix Table A5 Cue–stage map | `tables/table_cue_stage_map.csv` | 52 |
+| fsQCA calibration and truth tables | `tables/table_qca_anchors.csv`, `_truth_tables.csv` | 30 |
+| Figure 1 Conceptual architecture; Figure 2 Framework; Figure 3 Data and analysis flow | `figures/fig_architecture.*`, `fig_framework.*`, `fig_method_flow.*` | 50 |
+| Figure 4 Funnel coefficients; Figure 5 Exposure vs. save-conversion coefficients; Figure 6 Engagement types; Figure 7 Complementarity; Figure 8 Save-conversion landscape; Figure 10 Robustness | `figures/fig_funnel_coefficients.*`, `fig_decoupling.*`, `fig_engagement_types.*`, `fig_complementarity.*`, `fig_save_landscape.*`, `fig_robustness.*` | 51 |
+| Figure 9 fsQCA configurations | `figures/fig_qca_configurations.*` | 30 |
+
+## 5. Methods in brief
+
+* **Study 1 (H1–H3).** NB2 regressions with estimated dispersion and HC1 standard errors for exposure
+  (plays), like conversion (likes, offset log plays) and save conversion (saves, offset log plays);
+  controls, language and posting-year fixed effects; the three cue families entered block-wise.
+* **Study 2 (H4–H5).** Exposure versus conversion comparison; saves relative to likes (offset log likes);
+  the four conversion models combined with a joint sandwich covariance from their influence functions to
+  test instrumental (saves, shares) minus affective (likes, comments) contrasts.
+* **Study 3 (H6, H7).** The number of triad dimensions with a strong cue (k = 0–3) is entered in the like and save conversion models, with a convexity test and interaction terms (stage 25). fsQCA with five conditions (semantic richness, on-screen text, visual quality, location
+  tag, followers); direct calibration within posting-year groups (5/50/95 percentiles; semantic
+  richness crossover set half a unit above the median); truth-table thresholds n ≥ 50, consistency ≥
+  0.80, PRI ≥ 0.65; permutation placebo (200), bootstrap (500), 18 alternative specifications.
+
+## 6. Environment
+
+Tested with Python 3.10. `requirements.txt` pins the exact versions that produced the reported
+results (pandas 2.3.3, numpy 2.2.6, scipy 1.15.3, scikit-learn 1.7.2, statsmodels 0.14.6, matplotlib
+3.10.9, Pillow 12.3.0); a newer statsmodels changes the negative binomial estimates.
