@@ -5,6 +5,11 @@ video exposure, like conversion and save conversion. Lefebvre's spatial triad is
 three cue families (embedded narrative, sensory enhancement, interaction guidance), and the analysis
 moves from net effects (negative binomial models) to decoupling tests and configurations (fsQCA).
 
+> **Terms of use — peer review only.** This repository is provided solely so that the editors and
+> reviewers of the manuscript can inspect the data and rerun the analysis. The data and code may not
+> be used, copied, redistributed or published, in whole or in part, for any other purpose without
+> prior written permission from the authors. All rights reserved.
+
 ```bash
 pip install -r requirements.txt   # Python 3.10+
 python main.py                    # full pipeline, about 2 minutes
@@ -49,8 +54,13 @@ All outputs are written to `outputs/tables/` and `outputs/figures/`. Random seed
 The raw file holds the full public metadata of TikTok videos of everyday places (cafés, markets,
 bookstores, museums, art exhibitions, parks), collected through the public web endpoint and completed on
 28 May 2025. Stage 00 documents the collection; it needs live access to TikTok and is not run.
-The shared raw file omits fields that identify creators or link to their media (handle, nickname,
-avatar, profile text, cover/play/download/share URLs); none of them is used by the analysis.
+**Removed from the raw file in this repository.** To protect the creators' personal information,
+14 columns of the original scrape were deleted before upload: `author_info.unique_id`,
+`author_info.nickname`, `author_info.avatar_urls`, `author_info.signature`, `video_info.cover_url`,
+`video_info.origin_cover_url`, `video_info.dynamic_cover_url`, `video_info.play_url`,
+`video_info.download_url`, `music_info.play_url`, `url`, `shareMeta_title`, `shareMeta_desc` and
+`video_path`. None of them is used by the analysis; with this file `python main.py` gives the same
+processed data, tables and figures as the original scrape.
 
 | Step | Records |
 |---|---|
